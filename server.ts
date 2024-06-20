@@ -7,6 +7,8 @@ export async function run(
   allowedUrls: string,
   allowedOrigins: string,
 ) {
+  const allowedUrlsRules = allowedUrls.split(',').filter(_ => !!_)
+  const allowAllUrls = allowedUrlsRules.length === 0
   const server = serve({ port });
   console.log(`CORS proxy server listening at port ${port}.`);
 
@@ -14,7 +16,7 @@ export async function run(
     try {
       if (req.url.startsWith(route)) {
         const url = req.url.slice(route.length);
-        if (!isUrlAllowed(url, allowedUrls)) {
+        if (allowAllUrls && !isUrlAllowed(url, allowedUrlsRules)) {
           req.respond({ status: 403, body: "403 Forbidden" });
           continue;
         }
