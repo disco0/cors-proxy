@@ -13,7 +13,9 @@ export function getValueFromArgs(
 let LOGGED_NO_ENV_PERMISSION_WARNING = false;
 export function getValueFromEnv(arg: string): string | undefined {
   try {
-    return String(Deno.env.get(arg));
+    if (Deno.env.has(arg)) {
+      return Deno.env.get(arg);
+    }
   } catch (err) {
     if (
       err.message ===
