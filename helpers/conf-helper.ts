@@ -1,15 +1,3 @@
-export function getValueFromArgs(
-  args: { [arg: string]: string | number },
-  flags: string[],
-): string | undefined {
-  for (const flag of flags) {
-    if (args[flag]) {
-      return args[flag].toString();
-    }
-  }
-  return undefined;
-}
-
 let LOGGED_NO_ENV_PERMISSION_WARNING = false;
 export function getValueFromEnv(arg: string): string | undefined {
   try {

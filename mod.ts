@@ -1,10 +1,21 @@
-import { parse } from "https://deno.land/std@0.74.0/flags/mod.ts";
-import { getValueFromArgs, getValueFromEnv } from "./helpers/conf-helper.ts";
+import { parseArgs } from "@std/cli/parse-args";
+import { getValueFromEnv } from "./helpers/conf-helper.ts";
 import { config } from "./config.ts";
 import { showHelpMessage } from "./helpers/help-helper.ts";
 import { run } from "./server.ts";
 
-const args = parse(Deno.args);
+const args = parseArgs(Deno.args, {
+  string: [
+    config.route.argsLong,
+    config.route.argsShort,
+    config.port.argsLong,
+    config.port.argsShort,
+    config.allowedUrls.argsLong,
+    config.allowedUrls.argsShort,
+    config.allowedOrigins.argsLong,
+    config.allowedOrigins.argsShort
+  ]
+});
 
 if (args.help) {
   showHelpMessage();
@@ -12,25 +23,28 @@ if (args.help) {
 }
 
 const port = Number(
-  getValueFromArgs(args, [config.port.argsLong, config.port.argsShort]) ||
-    getValueFromEnv(config.port.env) || config.port.default,
+  args[config.port.argsLong]
+  ?? args[config.port.argsShort]
+  ?? getValueFromEnv(config.port.env)
+  ?? config.port.default,
 );
+
 const corsRoutePrefix =
-  getValueFromArgs(args, [config.route.argsLong, config.route.argsShort]) ||
-  getValueFromEnv(config.route.env) || config.route.default;
+  args[config.route.argsLong]
+  ?? args[config.route.argsShort]
+  ?? getValueFromEnv(config.route.env)
+  ?? config.route.default;
+
 const allowedUrls =
-  getValueFromArgs(
-    args,
-    [config.allowedUrls.argsLong, config.allowedUrls.argsShort],
-  ) ||
-  getValueFromEnv(config.allowedUrls.env) ||
-  config.allowedUrls.default;
+  args[config.allowedUrls.argsLong]
+  ?? args[config.allowedUrls.argsShort]
+  ?? getValueFromEnv(config.allowedUrls.env)
+  ?? config.allowedUrls.default;
+
 const allowedOrigins =
-  getValueFromArgs(
-    args,
-    [config.allowedOrigins.argsLong, config.allowedOrigins.argsShort],
-  ) ||
-  getValueFromEnv(config.allowedOrigins.env) ||
-  config.allowedOrigins.default;
+  args[config.allowedOrigins.argsLong]
+  ?? args[config.allowedOrigins.argsShort]
+  ?? getValueFromEnv(config.allowedOrigins.env)
+  ?? config.allowedOrigins.default;
 
 run(port, corsRoutePrefix, allowedUrls, allowedOrigins);

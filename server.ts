@@ -1,4 +1,3 @@
-import { serve } from "https://deno.land/std@0.74.0/http/server.ts";
 import { isUrlAllowed } from "./helpers/allowed-urls-helper.ts";
 
 export async function run(
@@ -9,27 +8,29 @@ export async function run(
 ) {
   const allowedUrlsRules = allowedUrls.split(',').filter(_ => !!_)
   const allowAllUrls = allowedUrlsRules.length === 0
-  const server = serve({ port });
-  console.log(`CORS proxy server listening at port ${port}.`);
 
-  for await (const req of server) {
+  const handler = async (req: Request) =>
+  {
     try {
       if (req.url.startsWith(route)) {
         const url = req.url.slice(route.length);
         if (allowAllUrls && !isUrlAllowed(url, allowedUrlsRules)) {
-          req.respond({ status: 403, body: "403 Forbidden" });
-          continue;
+          return new Response("403 Forbidden", { status: 403 });
         }
         const response = await fetch(url);
         const text = await response.text();
         const headers = new Headers();
         headers.set("Access-Control-Allow-Origin", allowedOrigins);
-        req.respond({ body: text, headers });
+        return new Response(text, { headers })
       } else {
-        req.respond({ status: 404, body: "404 Not Found" });
+        return new Response("404 Not Found", { status: 404 });
       }
     } catch {
-      req.respond({ status: 500, body: "500 Internal Server Error" });
+      return new Response("500 Internal Server Error", { status: 500 });
     }
   }
+
+  const server = Deno.serve({ port }, handler)
+  console.log(`CORS proxy server listening at port ${port}.`);
+  await server.finished
 }
