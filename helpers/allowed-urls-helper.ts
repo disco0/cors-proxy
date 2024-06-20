@@ -10,6 +10,9 @@ export function isUrlAllowed(url: string, rules: string[]): boolean {
   }
 
   return rules.some((rule) => {
+    // Catch empty string being passed in from split
+    if(rule === '') { return true }
+
     /**
      * a) rule without trailing slash matches exactly with url (e.g. rule: https://duck.com/, url: https://duck.com)
      * b1) url starts with rule (including trailing slash; e.g. rule: https://example.com, url: https://example.com/path1)
