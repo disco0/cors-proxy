@@ -11,13 +11,15 @@ export async function run(
 
   const handler = async (req: Request) =>
   {
+    const url = new URL(req.url)
+    const path = url.href.substring(url.origin.length)
     try {
-      if (req.url.startsWith(route)) {
-        const url = req.url.slice(route.length);
-        if (allowAllUrls && !isUrlAllowed(url, allowedUrlsRules)) {
+      if (path.startsWith(route)) {
+        const proxiedUrl = path.slice(route.length);
+        if (!allowAllUrls && !isUrlAllowed(proxiedUrl, allowedUrlsRules)) {
           return new Response("403 Forbidden", { status: 403 });
         }
-        const response = await fetch(url);
+        const response = await fetch(proxiedUrl);
         const text = await response.text();
         const headers = new Headers();
         headers.set("Access-Control-Allow-Origin", allowedOrigins);
