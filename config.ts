@@ -1,11 +1,4 @@
-export const config: {
-  [key: string]: {
-    default: string;
-    env: string;
-    argsShort: string;
-    argsLong: string;
-  };
-} = {
+export const config = {
   port: {
     default: "3000",
     env: "PORT",
@@ -30,4 +23,11 @@ export const config: {
     argsShort: "o",
     argsLong: "allowed-origins",
   },
-};
+} as const satisfies {
+  [key: string]: {
+    default: string;
+    env: string;
+    argsShort: string;
+    argsLong: string;
+  };
+}
