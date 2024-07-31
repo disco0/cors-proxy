@@ -13,7 +13,9 @@ const args = parseArgs(Deno.args, {
     config.allowedUrls.argsLong,
     config.allowedUrls.argsShort,
     config.allowedOrigins.argsLong,
-    config.allowedOrigins.argsShort
+    config.allowedOrigins.argsShort,
+    config.allowedHeaders.argsLong,
+    config.allowedHeaders.argsShort,
   ]
 });
 
@@ -47,4 +49,11 @@ const allowedOrigins =
   ?? getValueFromEnv(config.allowedOrigins.env)
   ?? config.allowedOrigins.default;
 
-run(port, corsRoutePrefix, allowedUrls, allowedOrigins);
+const allowedHeaders = (
+  args[config.allowedOrigins.argsLong]
+  ?? args[config.allowedOrigins.argsShort]
+  ?? getValueFromEnv(config.allowedOrigins.env)
+  ?? config.allowedOrigins.default
+) || undefined;
+
+run(port, corsRoutePrefix, allowedUrls, allowedOrigins, allowedHeaders);

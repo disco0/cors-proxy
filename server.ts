@@ -5,6 +5,7 @@ export async function run(
   route: string,
   allowedUrls: string,
   allowedOrigins: string,
+  allowedHeaders?: string
 ) {
   const allowedUrlsRules = allowedUrls.split(',').filter(_ => !!_)
   const allowAllUrls = allowedUrlsRules.length === 0
@@ -23,6 +24,10 @@ export async function run(
         const text = await response.text();
         const headers = new Headers();
         headers.set("Access-Control-Allow-Origin", allowedOrigins);
+        if(allowedHeaders)
+        {
+            headers.set("Access-Control-Allow-Headers", allowedHeaders)
+        }
         return new Response(text, { headers })
       } else {
         return new Response("404 Not Found", { status: 404 });

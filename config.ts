@@ -23,6 +23,12 @@ export const config = {
     argsShort: "o",
     argsLong: "allowed-origins",
   },
+  allowedHeaders: {
+    default: "",
+    env: "ALLOWED_HEADERS",
+    argsShort: "H",
+    argsLong: "allowed-headers",
+  },
 } as const satisfies {
   [key: string]: {
     default: string;
