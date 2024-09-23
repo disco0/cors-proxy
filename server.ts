@@ -20,7 +20,12 @@ export async function run(
         if (!allowAllUrls && !isUrlAllowed(proxiedUrl, allowedUrlsRules)) {
           return new Response("403 Forbidden", { status: 403 });
         }
-        const response = await fetch(proxiedUrl);
+        const response = await fetch(proxiedUrl, {
+            body: req.body,
+            method: req.method,
+            credentials: req.credentials,
+            headers: req.headers
+        });
         const text = await response.text();
         const headers = new Headers();
         headers.set("Access-Control-Allow-Origin", allowedOrigins);
