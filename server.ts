@@ -5,7 +5,8 @@ export async function run(
   route: string,
   allowedUrls: string,
   allowedOrigins: string,
-  allowedHeaders?: string
+  allowedHeaders?: string,
+  allowedMethods?: string
 ) {
   const allowedUrlsRules = allowedUrls.split(',').filter(_ => !!_)
   const allowAllUrls = allowedUrlsRules.length === 0
@@ -24,10 +25,11 @@ export async function run(
             body: req.body,
             method: req.method,
             credentials: req.credentials,
-            headers: req.headers
+            headers: req.headers,
         });
         const text = await response.text();
         const headers = new Headers();
+        allowedMethods && headers.set("Access-Control-Allow-Methods", allowedMethods);
         headers.set("Access-Control-Allow-Origin", allowedOrigins);
         if(allowedHeaders)
         {
